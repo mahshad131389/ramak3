@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رامک - بازی</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    #gameFrame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      border: none;
+      z-index: 10;
+      background: transparent;
+    }
+    #mindar-ui,
+    #mindar-ui-scanning {
+      display: none !important;
+    }
+    
+    #status {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 100;
+      font-family: Arial;
+    }
+    
+    #closeButton {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 11;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-size: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <a-scene 
+    id="arScene"
+    mindar-image="imageTargetSrc: cow2.mind; uiLoading: false; uiScanning: false; uiError: false;"
+    vr-mode-ui="enabled: false" 
+    device-orientation-permission-ui="enabled: false">
+
+    <a-camera mindar-image-input active="false" position="0 0 0"></a-camera>
+                
+    <a-entity id="marker1" mindar-image-target="targetIndex: 0"></a-entity>
+    <a-entity id="marker2" mindar-image-target="targetIndex: 1"></a-entity>
+    <a-entity id="marker3" mindar-image-target="targetIndex: 2"></a-entity>
+    <a-entity id="marker4" mindar-image-target="targetIndex: 3"></a-entity>
+    <a-entity id="marker5" mindar-image-target="targetIndex: 4"></a-entity>
+    <a-entity id="marker6" mindar-image-target="targetIndex: 5"></a-entity>
+
+  </a-scene>
+
+  <iframe id="gameFrame" src=""></iframe>
+  <div id="status">در انتظار دیدن محصول... </div>
+  <button id="closeButton">×</button>
+
+
+  <script>
+    const iframe = document.getElementById('gameFrame');
+    const statusDiv = document.getElementById('status');
+    const closeButton = document.getElementById('closeButton');
+    
+    const markerUrls = {
+      marker1: "https://ramak.liara.run/first_game/",
+      marker2: "https://ramak.liara.run/second_game/",
+      marker3: "https://ramak.liara.run/third_game/",
+      marker4: "https://ramak.liara.run/fourth_game/",
+      marker5: "https://ramak.liara.run/fifth_game/",
+      marker6: "https://sorchi.liara.run/",
+      marker7: "https://sorchi.liara.run/"
+    };
+
+    let iframeActive = false;
+    let currentMarker = null;
+
+    function updateStatus(message) {
+      statusDiv.textContent = message;
+      console.log(message);
+    }
+
+    document.getElementById('marker1').addEventListener('targetFound', () => {
+      updateStatus("مارکر 1 شناسایی شد");
+      if (!iframeActive || currentMarker !== 'marker1') {
+        iframe.src = markerUrls.marker1;
+        iframe.style.display = 'block';
+        iframeActive = true;
+        currentMarker = 'marker1';
+        closeButton.style.display = 'block';
+        updateStatus("بارگذاری سایت برای مارکر 1");
+      }
+    });
+
+    document.getElementById('marker2').addEventListener('targetFound', () => {
+      updateStatus("مارکر 2 شناسایی شد");
+      if (!iframeActive || currentMarker !== 'marker2') {
+        iframe.src = markerUrls.marker2;
+        iframe.style.display = 'block';
+        iframeActive = true;
+        currentMarker = 'marker2';
+        closeButton.style.display = 'block';
+        updateStatus("بارگذاری سایت برای مارکر 2");
+      }
+    });
+
+    document.getElementById('marker3').addEventListener('targetFound', () => {
+      updateStatus("مارکر 3 شناسایی شد");
+      if (!iframeActive || currentMarker !== 'marker3') {
+        iframe.src = markerUrls.marker3;
+        iframe.style.display = 'block';
+        iframeActive = true;
+        currentMarker = 'marker3';
+        closeButton.style.display = 'block';
+        updateStatus("بارگذاری سایت برای مارکر 3");
+      }
+    });
+
+    document.getElementById('marker4').addEventListener('targetFound', () => {
+      updateStatus("مارکر 4 شناسایی شد");
+      if (!iframeActive || currentMarker !== 'marker4') {
+        iframe.src = markerUrls.marker4;
+        iframe.style.display = 'block';
+        iframeActive = true;
+        currentMarker = 'marker4';
+        closeButton.style.display = 'block';
+        updateStatus("بارگذاری سایت برای مارکر 4");
+      }
+    });
+
+    document.getElementById('marker5').addEventListener('targetFound', () => {
+      updateStatus("مارکر 5 شناسایی شد");
+      if (!iframeActive || currentMarker !== 'marker5') {
+        iframe.src = markerUrls.marker5;
+        iframe.style.display = 'block';
+        iframeActive = true;
+        currentMarker = 'marker5';
+        closeButton.style.display = 'block';
+        updateStatus("بارگذاری سایت برای مارکر 5");
+      }
+    });
+
+
+
+    iframe.addEventListener('error', (e) => {
+      updateStatus("خطا در بارگذاری سایت: ممکن است به دلیل محدودیت‌های امنیتی مرورگر باشد");
+      console.error("خطای iframe:", e);
+    });
+
+    iframe.addEventListener('load', () => {
+      updateStatus("سایت با موفقیت بارگذاری شد");
+    });
+
+    closeButton.addEventListener('click', () => {
+      iframe.style.display = 'none';
+      iframeActive = false;
+      currentMarker = null;
+      closeButton.style.display = 'none';
+      updateStatus("صفحه بسته شد. در انتظار شناسایی مارکر...");
+    });
+  </script>
+
+</body>
+</html>

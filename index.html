@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>رامک - بازی</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+    
+    #gameFrame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      border: none;
+      z-index: 10;
+      background: transparent;
+    }
+    
+    .mindar-ui-overlay {
+      display: none !important;
+    }
+    
+    #status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 100;
+      font-family: Arial;
+    }
+    
+    #closeButton {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 11;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      font-size: 20px;
+      display: none;
+    }
+    
+    .a-enter-ar {
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+
+  <a-scene id="arScene" 
+       vr-mode-ui="enabled: false" 
+       mindar-image="imageTargetSrc: target.mind; autoStart: true; uiLoading: no; uiScanning: no; uiError: no;" 
+       device-orientation-permission-ui="enabled: false"
+       renderer="colorManagement: true;">
+                
+    <a-entity id="marker1" mindar-image-target="targetIndex: 0"></a-entity>
+    <a-entity id="marker2" mindar-image-target="targetIndex: 1"></a-entity>
+    <a-entity id="marker3" mindar-image-target="targetIndex: 2"></a-entity>
+    <a-entity id="marker4" mindar-image-target="targetIndex: 3"></a-entity>
+    <a-entity id="marker5" mindar-image-target="targetIndex: 4"></a-entity>
+    <a-entity id="marker6" mindar-image-target="targetIndex: 5"></a-entity>
+
+
+    <a-camera mindar-image-input active="false" position="0 0 0"></a-camera>
+  </a-scene>
+
+  <iframe id="gameFrame" src=""></iframe>
+  <div id="status">دوربین رو روبروی محصول قرار بده...</div>
+  <button id="closeButton">×</button>
+
+  <script>
+    const iframe = document.getElementById('gameFrame');
+    const statusDiv = document.getElementById('status');
+    const closeButton = document.getElementById('closeButton');
+    const scene = document.getElementById('arScene');
+    
+    const markerUrls = {
+      marker1: "https://ramak.liara.run/first_game/",
+      marker2: "https://ramak.liara.run/second_game/",
+      marker3: "https://ramak.liara.run/third_game/",
+      marker4: "https://ramak.liara.run/fourth_game/",
+      marker5: "https://ramak.liara.run/fifth_game/",
+      marker6: "https://sorchi.liara.run/",
+      marker7: "https://sorchi.liara.run/"
+    };
+
+    let iframeActive = false;
+    let currentMarker = null;
+
+    function updateStatus(message) {
+      statusDiv.textContent = message;
+      console.log(message);
+    }
+
+    scene.addEventListener('loaded', function() {
+      setTimeout(() => {
+        const overlays = document.querySelectorAll('.mindar-ui-overlay, .a-enter-ar');
+        overlays.forEach(element => {
+          element.style.display = 'none';
+          element.style.visibility = 'hidden';
+        });
+      }, 1000);
+    });
+
+    for (let i = 1; i <= 7; i++) {
+      const markerId = `marker${i}`;
+      document.getElementById(markerId).addEventListener('targetFound', () => {
+        updateStatus(`محصول ${i} شناسایی شد`);
+        if (!iframeActive || currentMarker !== markerId) {
+          iframe.src = markerUrls[markerId];
+          iframe.style.display = 'block';
+          iframeActive = true;
+          currentMarker = markerId;
+          closeButton.style.display = 'block';
+          updateStatus(`بارگذاری بازی برای خوراکی... ${i}`);
+        }
+      });
+    }
+
+    iframe.addEventListener('error', (e) => {
+      updateStatus("خطا در بارگذاری سایت: ممکن است به دلیل محدودیت‌های امنیتی مرورگر باشد");
+      console.error("خطای iframe:", e);
+    });
+
+    iframe.addEventListener('load', () => {
+      updateStatus("خوراکی با موفقیت پیدا شد");
+    });
+
+    closeButton.addEventListener('click', () => {
+      iframe.style.display = 'none';
+      iframeActive = false;
+      currentMarker = null;
+      closeButton.style.display = 'none';
+      updateStatus("صفحه بسته شد. در انتظار شناسایی محصول...");
+    });
+  </script>
+
+</body>
+</html>
